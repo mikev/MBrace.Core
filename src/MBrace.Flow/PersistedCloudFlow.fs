@@ -14,7 +14,7 @@ open MBrace.Library
 
 open MBrace.Flow.Internals
 
-open MBrace.Runtime.Utils.PrettyPrinters
+//open MBrace.Runtime.Utils.PrettyPrinters
 
 #nowarn "444"
 
@@ -86,7 +86,7 @@ type PersistedCloudFlow<'T> internal (partitions : (IWorkerRef * CloudArray<'T>)
                 |> Async.Parallel
                 |> Async.Ignore
         }
-
+#if mdv
     /// Gets printed information on the persisted CloudFlow.
     member __.GetInfo() : string = PersistedCloudFlowReporter<'T>.Report(partitions, title = "PersistedCloudFlow partition info:")
     /// Prints information on the persisted CloudFlow to stdout.
@@ -94,6 +94,7 @@ type PersistedCloudFlow<'T> internal (partitions : (IWorkerRef * CloudArray<'T>)
 
     override __.ToString() = PersistedCloudFlowReporter<'T>.Report(partitions)
     member private __.StructuredFormatDisplay = __.ToString()
+#endif
 
 and PersistedCloudFlow private () =
 
@@ -168,7 +169,7 @@ and PersistedCloudFlow private () =
             return! flow.WithEvaluators (collectorf cts.Token) createVector (fun result -> local { return PersistedCloudFlow.Concat result })
     }
 
-
+#if mdv
 and private PersistedCloudFlowReporter<'T> () =
     static let template : Field<int * IWorkerRef * CloudArray<'T>> list =
         [   
@@ -183,3 +184,4 @@ and private PersistedCloudFlowReporter<'T> () =
     static member Report(partitions : (IWorkerRef * CloudArray<'T>) [], ?title : string) =
         let partitions = partitions |> Seq.mapi (fun i (w,p) -> i,w,p) |> Seq.toList
         Record.PrettyPrint(template, partitions, ?title = title, useBorders = false)
+#endif
