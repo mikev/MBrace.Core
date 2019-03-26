@@ -28,7 +28,6 @@
     <Compile Include="StoreTests\CloudDictionaryTests.fs" />
     <Compile Include="CloudTests.fs" />
     <Compile Include="CloudFlowTests.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
